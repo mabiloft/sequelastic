@@ -27,6 +27,7 @@
     "@elastic/elasticsearch": "^7.12.0",
     "@types/pluralize": "^0.0.29",
     "colors": "^1.4.0",
+    "exit": "^0.1.2",
     "pluralize": "^8.0.0",
     "sequelize-typescript": "^2.1.0",
     "tslib": "^2.2.0"
