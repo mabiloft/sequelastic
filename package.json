@@ -1,0 +1,34 @@
+{
+  "name": "sequelastic",
+  "version": "1.0.0",
+  "description": "bridge utility between sequelize-typescript and ElasticSearch",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mabiloft/sequelastic.git"
+  },
+  "keywords": [
+    "elasticsearch",
+    "elasticSearch",
+    "ElasticSearch",
+    "sequelize-typescript",
+    "Sequelize",
+    "utility"
+  ],
+  "author": "Mabiloft",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mabiloft/sequelastic/issues"
+  },
+  "homepage": "https://github.com/mabiloft/sequelastic#readme",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.12.0",
+    "@types/pluralize": "^0.0.29",
+    "colors": "^1.4.0",
+    "pluralize": "^8.0.0",
+    "sequelize-typescript": "^2.1.0",
+    "tslib": "^2.2.0"
+  }
+}
