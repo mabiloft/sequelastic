@@ -2,8 +2,10 @@
 
 ## The first sequelize-typescript and ElasticSearch bridge tool
 
-+ [installation](#installation)
-+ [usage](#usage)
+- [installation](#installation)
+- [usage](#usage)
+- [Sequelastic functions](#sequelastic-functions)
+- [Sequelastic types](#sequelastic-types)
 
 ## installation
 
@@ -31,21 +33,153 @@ const sequelastic = new Sequelastic({
   models: [model1, model2],
 });
 ```
-## Constructor Properties
 
-name | type | description | default |
------|------|------------ | ------- |
-node | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it) | elasticsearch service endpoint | http://localhost:9200
-models | ([Model](https://sequelize.org/master/class/lib/model.js~Model.html) \| [SequelasticModelType](#sequelasticmodeltype))[] | list of all the models to index | []
-exclude *(optional)* | string[] | list of the model's fields to globally exclude from index | *undefined*
+then sync your database with the elasticSearch service:
+
+```typescript
+sequelastic
+  .sync()
+  .then((success) => {
+    if (success) {
+      console.log("Database synced correctly");
+    } else {
+      console.log("Something went wrong");
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+```
+
+now you are ready to search whatever you want with sequelastic:
+
+```typescript
+sequelastic
+  .search("foo", "bar", { fuzzy: true, fuzziness: "AUTO" })
+  .then((results) => {
+    console.log(results);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+```
+
+---
+
+## Sequelastic Functions
+
+### Constructor
+
+_create new Sequelastic instance_
+
+```ts
+new Sequelastic(config: SequelasticContructorProps) => Sequelastic
+```
+
+| property |                            type                            |  description  | default |
+| :------: | :--------------------------------------------------------: | :-----------: | :-----: |
+|  config  | [SequelasticConstructorProps](#sequelasticcontructorprops) | config object |  none   |
+
+</br>
+
+### Sync
+
+_Sync SQL database_
+
+```typescript
+sequelastic.sync() => void
+```
+
+| property |                         type                          |  description  | default |
+| :------: | :---------------------------------------------------: | :-----------: | :-----: |
+| options  | [SequelasticSyncOptions](#sequelasticcontructorprops) | config object |  none   |
+
+this function will sync your database with the elasticSearch service using the following method:
+
+- Deleting all the pre-existing indices
+- Recreating all the indices using as index name the plural of the model name
+- using bulk insertion to add all the corresponding records
+
+</br>
+
+### Search
+
+_Search in indices something_
+
+```typescript
+sequelastic.search(query: string, index: string, options:SequelasticSearchOptions) => Promise<[{[key: string]: any}]> // options.wholeResponse = false
+
+sequelastic.search(query: string, index:string, options: SequelizeSearchOptions) => Promise<elasticSearch.ApiResponse<Record<string, any>, Record<string, unknown>>> // options.wholeResponse = true
+```
+
+| property |                         type                          |             description              |  default  |
+| :------: | :---------------------------------------------------: | :----------------------------------: | :-------: |
+|  query   |                        string                         |    the elasticSearch query string    |   none    |
+|  index   |                        string                         | the index where search for something |   "\*"    |
+| options  | [SequelasticSearchOptions](#sequelasticsearchoptions) |            search options            | undefined |
+
+</br>
+
+### customSearch
+
+```typescript
+sequelastic.customSearch(params: elasticSearch.RequestParams.Search) => Promise<
+    elasticSearch.ApiResponse<Record<string, any>, Record<string, unknown>>
+  >
+```
+
+| property |                                                                    type                                                                     |         description         | default |
+| :------: | :-----------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------: | :-----: |
+|  params  | [elasicSearch.RequestParams.Search](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#_search) | the custom search parameter |  none   |
+
+</br>
+
+---
 
 ## Sequelastic Types
 
+### SequelasticContructorProps
+
+_object_
+
+|         key          |                                                           type                                                           |                        description                        |        default        |
+| :------------------: | :----------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------: | :-------------------: |
+|         node         |    [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it)    |              elasticsearch service endpoint               | http://localhost:9200 |
+|        models        | ([Model](https://sequelize.org/master/class/lib/model.js~Model.html) \| [SequelasticModelType](#sequelasticmodeltype))[] |              list of all the models to index              |          []           |
+| exclude _(optional)_ |   [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it)[]   | list of the model's fields to globally exclude from index |      _undefined_      |
+
+</br>
+
 ### SequelasticModelType
 
-*object*
+_object_
 
-name | type | description |
------|------|-------------|
-model | [Model](https://sequelize.org/master/class/lib/model.js~Model.html) | sequelize model to be indexed 
-attributes | string[] \| {exclude: string[]} | 
+| key                     | type                                                                                                                                                                                                                                                    | description                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| model                   | [Model](https://sequelize.org/master/class/lib/model.js~Model.html)                                                                                                                                                                                     | sequelize model to be indexed                           |
+| attributes _(optional)_ | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it)[] \| {exclude: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it)[]} | fields to include or exclude in index                   |
+| include _(optional)_    | ([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it) \| [SequelasticModelType](#sequelasticmodeltype))[]                                                                                 | object to eventually specify models to include in index |
+
+</br>
+
+### SequelasticSyncOptions
+
+_object_
+
+|   key   |                                                         type                                                         |                                                                   description                                                                    | default |
+| :-----: | :------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------: | :-----: |
+| refresh | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it) | use refresh in [elasticSearch bulk](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#_bulk) method |  false  |
+
+</br>
+
+### SequelasticSearchOptions
+
+|      key      |                                                             type                                                             |                                                    description                                                    | default |
+| :-----------: | :--------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :-----: |
+|     fuzzy     |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |  use [fuzzy search](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)   |  false  |
+|   fuzziness   | "AUTO" \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it) | search [fuzziness](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) | "AUTO"  |
+| wholeResponse |                                                           boolean                                                            |                             get as return the whole search response or only the hits                              |  false  |
+
+</br>
+
+---
