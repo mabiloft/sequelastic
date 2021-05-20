@@ -94,7 +94,7 @@ this function will sync your database with the elasticSearch service using the f
 - using bulk insertion to add all the corresponding records
 
 ```typescript
-sequelastic.sync() => void
+sequelastic.sync() => Promise<boolean>
 ```
 
 | property |                         type                          |  description  | default |
