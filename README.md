@@ -1,5 +1,7 @@
 # Sequelastic
 
+:warning: **This version only works with sequelize-typescript 1.1.x**
+
 ## The first sequelize-typescript and ElasticSearch bridge tool
 
 - [installation](#installation)
