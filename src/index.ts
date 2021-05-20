@@ -9,6 +9,7 @@ type SequelasticModelType = {
   attributes?: string[] | { exclude: string[] };
   include?: (string | SequelasticModelType)[];
 };
+
 type SequelasticConstructorProps = {
   models: (typeof Model | SequelasticModelType)[];
   exclude?: string[];
