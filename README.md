@@ -86,6 +86,11 @@ new Sequelastic(config: SequelasticContructorProps) => Sequelastic
 
 _Sync SQL database_
 
+this function will sync your database with the elasticSearch service using the following method:
+- Deleting all the pre-existing indices
+- Recreating all the indices using as index name the plural of the model name
+- using bulk insertion to add all the corresponding records
+
 ```typescript
 sequelastic.sync() => void
 ```
@@ -94,17 +99,15 @@ sequelastic.sync() => void
 | :------: | :---------------------------------------------------: | :-----------: | :-----: |
 | options  | [SequelasticSyncOptions](#sequelasticcontructorprops) | config object |  none   |
 
-this function will sync your database with the elasticSearch service using the following method:
 
-- Deleting all the pre-existing indices
-- Recreating all the indices using as index name the plural of the model name
-- using bulk insertion to add all the corresponding records
 
 </br>
 
 ### Search
 
 _Search in indices something_
+
+this function  will search in elasticSearch using the search type [query_string](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
 ```typescript
 sequelastic.search(query: string, index: string, options:SequelasticSearchOptions) => Promise<[{[key: string]: any}]> // options.wholeResponse = false
@@ -118,9 +121,12 @@ sequelastic.search(query: string, index:string, options: SequelizeSearchOptions)
 |  index   |                        string                         | the index where search for something |   "\*"    |
 | options  | [SequelasticSearchOptions](#sequelasticsearchoptions) |            search options            | undefined |
 
+
 </br>
 
 ### customSearch
+
+_use a custom body for the elasticSearch \_search_
 
 ```typescript
 sequelastic.customSearch(params: elasticSearch.RequestParams.Search) => Promise<
