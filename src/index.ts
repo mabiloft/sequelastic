@@ -49,10 +49,6 @@ export default class Sequelastic {
 
   public async sync(options?: SequelasticSyncOptions): Promise<any> {
     const toExclude = this.#fieldsToExclude;
-    console.log(
-      "🚀 ~ file: index.ts ~ line 21 ~ Sequelastic ~ sync ~ toExclude",
-      toExclude
-    );
     const allDbPromises: Promise<any>[] = [];
     const allIndiciesCreationPromises: Promise<any>[] = [];
     try {
