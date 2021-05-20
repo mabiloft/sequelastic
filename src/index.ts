@@ -18,11 +18,15 @@ type SequelasticSearchOptionsWholeResponse = {
   fuzzy?: boolean;
   fuzziness: "AUTO" | number;
   wholeResponse?: true;
+  from?: number;
+  size?: number;
 };
 type SequelasticSearchOptions = {
   fuzzy?: boolean;
   fuzziness: "AUTO" | number;
   wholeResponse?: false;
+  from?: number;
+  size?: number;
 };
 
 type SequelasticSyncOptions = { refresh?: boolean };
@@ -221,6 +225,8 @@ export default class Sequelastic {
               },
             },
           },
+          from: options?.from ? options.from : 0,
+          size: options?.size ? options.size : 10,
           query: {
             query_string: {
               query: options?.fuzzy ? `${query}~` : query,

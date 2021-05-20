@@ -89,6 +89,7 @@ new Sequelastic(config: SequelasticContructorProps) => Sequelastic
 _Sync SQL database_
 
 this function will sync your database with the elasticSearch service using the following method:
+
 - Deleting all the pre-existing indices
 - Recreating all the indices using as index name the plural of the model name
 - using bulk insertion to add all the corresponding records
@@ -101,15 +102,13 @@ sequelastic.sync() => Promise<boolean>
 | :------: | :---------------------------------------------------: | :-----------: | :-----: |
 | options  | [SequelasticSyncOptions](#sequelasticcontructorprops) | config object |  none   |
 
-
-
 </br>
 
 ### Search
 
 _Search in indices something_
 
-this function  will search in elasticSearch using the search type [query_string](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+this function will search in elasticSearch using the search type [query_string](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
 ```typescript
 sequelastic.search(query: string, index: string, options:SequelasticSearchOptions) => Promise<[{[key: string]: any}]> // options.wholeResponse = false
@@ -122,7 +121,6 @@ sequelastic.search(query: string, index:string, options: SequelizeSearchOptions)
 |  query   |                        string                         |    the elasticSearch query string    |   none    |
 |  index   |                        string                         | the index where search for something |   "\*"    |
 | options  | [SequelasticSearchOptions](#sequelasticsearchoptions) |            search options            | undefined |
-
 
 </br>
 
@@ -186,8 +184,8 @@ _object_
 | :-----------: | :--------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :-----: |
 |     fuzzy     |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |  use [fuzzy search](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)   |  false  |
 |   fuzziness   | "AUTO" \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it) | search [fuzziness](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) | "AUTO"  |
-| wholeResponse |                                                           boolean                                                            |                             get as return the whole search response or only the hits                              |  false  |
-
-</br>
+| wholeResponse |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |                             get as return the whole search response or only the hits                              |  false  |
+|     from      |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                           offset from the first result                                            |    0    |
+|     size      |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                       maximum amount of hits to be returned                                       |   10    |
 
 ---
