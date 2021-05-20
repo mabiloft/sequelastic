@@ -31,3 +31,21 @@ const sequelastic = new Sequelastic({
   models: [model1, model2],
 });
 ```
+## Constructor Properties
+
+name | type | description | default |
+-----|------|------------ | ------- |
+node | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it) | elasticsearch service endpoint | http://localhost:9200
+models | ([Model](https://sequelize.org/master/class/lib/model.js~Model.html) \| [SequelasticModelType](#sequelasticmodeltype))[] | list of all the models to index | []
+exclude *(optional)* | string[] | list of the model's fields to globally exclude from index | *undefined*
+
+## Sequelastic Types
+
+### SequelasticModelType
+
+*object*
+
+name | type | description |
+-----|------|-------------|
+model | [Model](https://sequelize.org/master/class/lib/model.js~Model.html) | sequelize model to be indexed 
+attributes | string[] \| {exclude: string[]} | 
