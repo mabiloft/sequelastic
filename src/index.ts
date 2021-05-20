@@ -24,6 +24,8 @@ type SequelasticSearchOptions = {
   wholeResponse?: false;
 };
 
+type SequelasticSyncOptions = { refresh?: boolean };
+
 function isSequelasticModel(
   inputModel: any
 ): inputModel is SequelasticModelType {
@@ -44,7 +46,7 @@ export default class Sequelastic {
     this.#fieldsToExclude = fieldsToExclude;
   }
 
-  public async sync(): Promise<any> {
+  public async sync(options?: SequelasticSyncOptions): Promise<any> {
     const toExclude = this.#fieldsToExclude;
     console.log(
       "🚀 ~ file: index.ts ~ line 21 ~ Sequelastic ~ sync ~ toExclude",
@@ -172,9 +174,11 @@ export default class Sequelastic {
       for (const index of indices) {
         // console.log(index.documents[0]);
         const docs = index.documents.flat();
-        this.elastic.bulk({ body: docs, refresh: true }).catch((err) => {
-          console.log("BULK ERR".red, err);
-        });
+        this.elastic
+          .bulk({ body: docs, refresh: options?.refresh })
+          .catch((err) => {
+            console.log("BULK ERR".red, err);
+          });
       }
       // this.elastic.updateByQuery({});
     } catch (err) {
@@ -185,22 +189,22 @@ export default class Sequelastic {
   }
 
   public async search(
-    index: "_all" | "*" | string,
     query: string,
+    index: "_all" | "*" | string,
     options?: SequelasticSearchOptions
   ): Promise<[{ [key: string]: any }]>;
 
   public async search(
-    index: "_all" | "*" | string,
     query: string,
+    index: "_all" | "*" | string,
     options?: SequelasticSearchOptionsWholeResponse
   ): Promise<
     elasticSearch.ApiResponse<Record<string, any>, Record<string, unknown>>
   >;
 
   public async search(
-    index: "_all" | "*" | string,
     query: string,
+    index: "_all" | "*" | string = "*",
     options?: SequelasticSearchOptionsWholeResponse | SequelasticSearchOptions
   ): Promise<
     | [{ [key: string]: any }]
