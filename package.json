@@ -4,7 +4,9 @@
   "description": "bridge utility between sequelize-typescript and ElasticSearch",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mabiloft/sequelastic.git"
@@ -31,5 +33,8 @@
     "pluralize": "^8.0.0",
     "sequelize-typescript": "^2.1.0",
     "tslib": "^2.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.4"
   }
 }
