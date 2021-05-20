@@ -5,7 +5,9 @@ import { Model } from "sequelize-typescript";
 
 type SequelasticModelType = {
   model: typeof Model;
+  as?: string;
   attributes?: string[] | { exclude: string[] };
+  include?: (string | SequelasticModelType)[];
 };
 type SequelasticConstructorProps = {
   models: (typeof Model | SequelasticModelType)[];
@@ -44,7 +46,10 @@ export default class Sequelastic {
 
   public async sync(): Promise<any> {
     const toExclude = this.#fieldsToExclude;
-
+    console.log(
+      "🚀 ~ file: index.ts ~ line 21 ~ Sequelastic ~ sync ~ toExclude",
+      toExclude
+    );
     const allDbPromises: Promise<any>[] = [];
     const allIndiciesCreationPromises: Promise<any>[] = [];
     try {
@@ -95,23 +100,30 @@ export default class Sequelastic {
     this.models.forEach((model: any) => {
       allDbPromises.push(
         new Promise(function (res, rej) {
+          const attributesObject = model.attributes
+            ? model.attributes
+            : { exclude: toExclude };
+
+          const findAllObj = {
+            attributes: attributesObject,
+            as: model.as,
+            include: model.include ? model.include : [],
+          };
           try {
             if (!!model.model) {
               res(
                 model.model
                   .unscoped()
-                  .findAll({
-                    attributes: model.attributes
-                      ? model.attributes
-                      : { exclude: toExclude },
-                  })
+                  .findAll(findAllObj)
                   .map((x: any) => {
                     // console.log("PROMISE", x.toJSON());
 
                     return [
                       {
                         index: {
-                          _index: pluralize.plural(model.name.toLowerCase()),
+                          _index: pluralize.plural(
+                            model.model.name.toLowerCase()
+                          ),
                         },
                       },
                       x?.toJSON(),
@@ -156,12 +168,15 @@ export default class Sequelastic {
           return { name: pluralize.plural(x.name), documents: allDocuments[i] };
         }
       });
+      // return indices;
       for (const index of indices) {
+        // console.log(index.documents[0]);
         const docs = index.documents.flat();
         this.elastic.bulk({ body: docs, refresh: true }).catch((err) => {
           console.log("BULK ERR".red, err);
         });
       }
+      // this.elastic.updateByQuery({});
     } catch (err) {
       console.error(err);
       return false;
