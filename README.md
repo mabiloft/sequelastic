@@ -116,11 +116,11 @@ sequelastic.search(query: string, index: string, options:SequelasticSearchOption
 sequelastic.search(query: string, index:string, options: SequelizeSearchOptions) => Promise<elasticSearch.ApiResponse<Record<string, any>, Record<string, unknown>>> // options.wholeResponse = true
 ```
 
-| property |                         type                          |             description              |  default  |
-| :------: | :---------------------------------------------------: | :----------------------------------: | :-------: |
-|  query   |                        string                         |    the elasticSearch query string    |   none    |
-|  index   |                        string                         | the index where search for something |   "\*"    |
-| options  | [SequelasticSearchOptions](#sequelasticsearchoptions) |            search options            | undefined |
+| property |                                                        type                                                        |             description              |  default  |
+| :------: | :----------------------------------------------------------------------------------------------------------------: | :----------------------------------: | :-------: |
+|  query   | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it) |    the elasticSearch query string    |   none    |
+|  index   | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it) | the index where search for something |   "\*"    |
+| options  |                               [SequelasticSearchOptions](#sequelasticsearchoptions)                                |            search options            | undefined |
 
 </br>
 
@@ -140,13 +140,42 @@ sequelastic.customSearch(params: elasticSearch.RequestParams.Search) => Promise<
 
 </br>
 
+### searchInIndices
+
+_Make a search on different indices with a single request_
+
+this function makes a multiple search on elasticSearch adding using the same query, you can choose, for each index, the fuzziness and the pagination
+
+```typescript
+sequelastic.searchInIndices(query: string, options: SequelasticMultipleSearchOptions) => Promise<
+    elasticSearch.ApiResponse<Record<string, any>, Record<string, unknown>>
+  >
+```
+
+| property |                                                        type                                                        |                 description                  |  default  |
+| :------: | :----------------------------------------------------------------------------------------------------------------: | :------------------------------------------: | :-------: |
+|  query   | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String?retiredLocale=it) | the search query, you can also use operators |   none    |
+| options  |                       [SequelasticMultipleSearchOptions](#sequelasticmultiplesearchoptions)                        |              the search options              | undefined |
+
+</br>
+
+### allIndices
+
+_Get all indices in the cluster_
+
+```typescript
+sequelastic.allIndices() => Promise<string[]>
+```
+
+</br>
+
 ---
+
+</br>
 
 ## Sequelastic Types
 
 ### SequelasticContructorProps
-
-_object_
 
 |         key          |                                                           type                                                           |                        description                        |        default        |
 | :------------------: | :----------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------: | :-------------------: |
@@ -158,8 +187,6 @@ _object_
 
 ### SequelasticModelType
 
-_object_
-
 | key                     | type                                                                                                                                                                                                                                                    | description                                             |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | model                   | [Model](https://sequelize.org/master/class/lib/model.js~Model.html)                                                                                                                                                                                     | sequelize model to be indexed                           |
@@ -170,8 +197,6 @@ _object_
 
 ### SequelasticSyncOptions
 
-_object_
-
 |   key   |                                                         type                                                         |                                                                   description                                                                    | default |
 | :-----: | :------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------: | :-----: |
 | refresh | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it) | use refresh in [elasticSearch bulk](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#_bulk) method |  false  |
@@ -180,12 +205,34 @@ _object_
 
 ### SequelasticSearchOptions
 
-|      key      |                                                             type                                                             |                                                    description                                                    | default |
-| :-----------: | :--------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :-----: |
-|     fuzzy     |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |  use [fuzzy search](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)   |  false  |
-|   fuzziness   | "AUTO" \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it) | search [fuzziness](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) | "AUTO"  |
-| wholeResponse |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |                             get as return the whole search response or only the hits                              |  false  |
-|     from      |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                           offset from the first result                                            |    0    |
-|     size      |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                       maximum amount of hits to be returned                                       |   10    |
+|            key             |                                                             type                                                             |                                                    description                                                    | default |
+| :------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :-----: |
+|     fuzzy _(optional)_     |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |  use [fuzzy search](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)   |  false  |
+|   fuzziness _(optional)_   | "AUTO" \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it) | search [fuzziness](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) | "AUTO"  |
+| wholeResponse _(optional)_ |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |                             get as return the whole search response or only the hits                              |  false  |
+|     from _(optional)_      |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                           offset from the first result                                            |    0    |
+|     size _(optional)_      |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                       maximum amount of hits to be returned                                       |   10    |
+
+## SequelasticMultipleSearchOptions
+
+|          key           |                                                             type                                                             |                                                    description                                                    |     default     |
+| :--------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :-------------: |
+|  indices _(optional)_  |                       (string \| [SequelasticMultipleSearchIndex](#sequelasticmultiplesearchindex) )[]                       |                                      the indices where search for the query                                       | all the indices |
+|   fuzzy _(optional)_   |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |  use [fuzzy search](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)   |      false      |
+| fuzziness _(optional)_ | "AUTO" \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it) | search [fuzziness](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) |     "AUTO"      |
+|   from _(optional)_    |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                           offset from the first result                                            |        0        |
+|   size _(optional)_    |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                       maximum amount of hits to be returned                                       |       10        |
+
+</br>
+
+## SequelasticMultipleSearchIndex
+
+|          key           |                                                             type                                                             |                                                    description                                                    | default |
+| :--------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :-----: |
+|         index          |                                                            string                                                            |                                         index where search for the query                                          |  none   |
+|   fuzzy _(optional)_   |     [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean?retiredLocale=it)     |  use [fuzzy search](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)   |  false  |
+| fuzziness _(optional)_ | "AUTO" \| [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it) | search [fuzziness](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness) | "AUTO"  |
+|   from _(optional)_    |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                           offset from the first result                                            |    0    |
+|   size _(optional)_    |      [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number?retiredLocale=it)      |                                       maximum amount of hits to be returned                                       |   10    |
 
 ---

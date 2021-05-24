@@ -23,10 +23,23 @@ type SequelasticSearchOptionsWholeResponse = {
 };
 type SequelasticSearchOptions = {
   fuzzy?: boolean;
-  fuzziness: "AUTO" | number;
+  fuzziness?: "AUTO" | number;
   wholeResponse?: false;
   from?: number;
   size?: number;
+};
+
+type SequelasticMultipleSearchIndex = {
+  index: string;
+  options: Omit<SequelasticSearchOptions, "wholeResponse">;
+};
+
+type SequelasticMultipleSearchOptions = {
+  indices?: (SequelasticMultipleSearchIndex | string)[];
+  from?: number;
+  size?: number;
+  fuzzy?: boolean;
+  fuzziness?: "AUTO" | number;
 };
 
 type SequelasticSyncOptions = { refresh?: boolean };
@@ -257,6 +270,64 @@ export default class Sequelastic {
     }
   }
 
+  public async searchInIndices(
+    query: string,
+    options?: SequelasticMultipleSearchOptions
+  ) {
+    const existingIndices: string[] = (
+      await this.elastic.cat.indices({ format: "json" })
+    ).body.map((x: any) => x.index);
+
+    const validIndices = options?.indices
+      ? options?.indices.filter((index) => {
+          if (typeof index === "string") {
+            return existingIndices.findIndex((x) => x === index) !== -1;
+          } else {
+            return existingIndices.findIndex((x) => x === index.index) !== -1;
+          }
+        })
+      : existingIndices;
+
+    const payload: any[] = [];
+
+    validIndices.forEach((index) => {
+      const indexName = typeof index === "string" ? index : index.index;
+      const from =
+        typeof index === "string" ? options?.from : index.options?.from;
+      const size =
+        typeof index === "string" ? options?.size : index.options?.size;
+      const fuzzy =
+        typeof index === "string" ? options?.fuzzy : index.options?.fuzzy;
+      const fuzziness =
+        typeof index === "string"
+          ? options?.fuzziness
+          : index.options?.fuzziness;
+
+      payload.push(
+        { index: indexName },
+        {
+          from,
+          size,
+          query: {
+            query_string: { query: fuzzy ? `${query}~` : query, fuzziness },
+          },
+        }
+      );
+    });
+    try {
+      return await this.elastic.msearch({ body: payload });
+    } catch (err) {
+      this.handleErrors(err);
+    }
+  }
+
+  public async allIndices() {
+    const allIndices = await (
+      await this.elastic.cat.indices({ format: "json" })
+    ).body.map((x: any) => x.index);
+
+    return allIndices;
+  }
   private handleErrors(error: any): never {
     if (error.body?.error) {
       console.log("Sequelastic error:", error.body?.error);
@@ -281,13 +352,6 @@ export async function checkIndex(indexName: string) {
   return !!index;
 }
 
-// type SqlType = "INTEGER" | "STRING" | "DATE" | "VIRTUAL" | "TEXT" | "JSON";
-// type SqlAttributesType = {
-//   [key: string]: {
-//     type: SqlType;
-//     field: string;
-//   };
-// };
 function parseSqlAttributesToElastic(rawAttributes: any) {
   const newProps: any = {};
 
