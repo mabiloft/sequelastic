@@ -1,5 +1,5 @@
 {
-  "name": "sequelastic",
+  "name": "@mabiloft/sequelastic",
   "version": "1.0.1",
   "description": "bridge utility between sequelize-typescript and ElasticSearch",
   "main": "dist/index.js",
