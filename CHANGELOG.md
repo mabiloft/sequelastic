@@ -1,6 +1,6 @@
 # Sequelastic Changelog
 
-## **[1.0.0]** - 2021/05/25 - first release with changelog
+## **[1.0.1]** - 2021/05/25 - first release with changelog
 
 ✅ Bugfix
 
