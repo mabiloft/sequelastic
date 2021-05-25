@@ -1,17 +1,17 @@
 import "colors";
 import elasticSearch, { ClientOptions } from "@elastic/elasticsearch";
 import pluralize from "pluralize";
-import { Model } from "sequelize-typescript";
+import { Model, ModelType } from "sequelize-typescript";
 
 type SequelasticModelType = {
-  model: typeof Model;
+  model: ModelType<any, any>;
   as?: string;
   attributes?: string[] | { exclude: string[] };
   include?: (string | SequelasticModelType)[];
 };
 
 type SequelasticConstructorProps = {
-  models: (typeof Model | SequelasticModelType)[];
+  models: (ModelType<any, any> | SequelasticModelType)[];
   exclude?: string[];
 } & ClientOptions;
 type SequelasticSearchOptionsWholeResponse = {
@@ -51,7 +51,7 @@ function isSequelasticModel(
 }
 export default class Sequelastic {
   public elastic: elasticSearch.Client;
-  public models: (SequelasticModelType | typeof Model)[];
+  public models: (SequelasticModelType | ModelType<any, any>)[];
   #fieldsToExclude: string[];
   // constructor(options: SqlasticConstructorProps) {
   constructor(options: SequelasticConstructorProps) {
@@ -87,7 +87,7 @@ export default class Sequelastic {
                 body: {
                   mappings: {
                     properties: parseSqlAttributesToElastic(
-                      model.model.rawAttributes
+                      (model.model as any as typeof Model).rawAttributes
                     ),
                   },
                 },
@@ -95,7 +95,7 @@ export default class Sequelastic {
             } else {
               this.elastic.indices.create({
                 index: pluralize.plural(
-                  (model as typeof Model).name.toLowerCase()
+                  (model as ModelType<any, any>).name.toLowerCase()
                 ),
                 body: {
                   mappings: {
