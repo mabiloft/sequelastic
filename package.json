@@ -1,6 +1,6 @@
 {
   "name": "sequelastic",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "bridge utility between sequelize-typescript and ElasticSearch",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

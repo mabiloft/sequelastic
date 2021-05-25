@@ -1,5 +1,11 @@
 # Sequelastic
 
+:warning: This only works with sequelize-typescript@2, in order to use it with sequelize-typescript@1 use:
+
+```
+npm install sequelastic@0.0.5
+```
+
 ## The first sequelize-typescript and ElasticSearch bridge tool
 
 - [installation](#installation)
