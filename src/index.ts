@@ -4,14 +4,14 @@ import pluralize from "pluralize";
 import { Model, ModelType } from "sequelize-typescript";
 
 type SequelasticModelType = {
-  model: ModelType;
+  model: ModelType<any, any>;
   as?: string;
   attributes?: string[] | { exclude: string[] };
   include?: (string | SequelasticModelType)[];
 };
 
 type SequelasticConstructorProps = {
-  models: (ModelType | SequelasticModelType)[];
+  models: (ModelType<any, any> | SequelasticModelType)[];
   exclude?: string[];
 } & ClientOptions;
 type SequelasticSearchOptionsWholeResponse = {
@@ -51,7 +51,7 @@ function isSequelasticModel(
 }
 export default class Sequelastic {
   public elastic: elasticSearch.Client;
-  public models: (SequelasticModelType | ModelType)[];
+  public models: (SequelasticModelType | ModelType<any, any>)[];
   #fieldsToExclude: string[];
   // constructor(options: SqlasticConstructorProps) {
   constructor(options: SequelasticConstructorProps) {
@@ -95,7 +95,7 @@ export default class Sequelastic {
             } else {
               this.elastic.indices.create({
                 index: pluralize.plural(
-                  (model as ModelType).name.toLowerCase()
+                  (model as ModelType<any, any>).name.toLowerCase()
                 ),
                 body: {
                   mappings: {

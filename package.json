@@ -1,6 +1,6 @@
 {
   "name": "sequelastic",
-  "version": "0.0.6",
+  "version": "1.0.2",
   "description": "bridge utility between sequelize-typescript and ElasticSearch",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,15 +26,15 @@
   },
   "homepage": "https://github.com/mabiloft/sequelastic#readme",
   "dependencies": {
-    "@types/bluebird": "^3.5.35",
     "@elastic/elasticsearch": "^7.12.0",
+    "@types/bluebird": "^3.5.35",
     "@types/pluralize": "^0.0.29",
     "bluebird": "^3.7.2",
     "colors": "^1.4.0",
     "exit": "^0.1.2",
     "pluralize": "^8.0.0",
-    "sequelize": "^5.22.3",
-    "sequelize-typescript": "^1.1.0",
+    "sequelize": "^6.6.2",
+    "sequelize-typescript": "^2.1.0",
     "tslib": "^2.2.0"
   },
   "devDependencies": {
