@@ -250,7 +250,7 @@ export default class Sequelastic {
         },
       });
 
-      if (options.wholeResponse) return result;
+      if (options.wholeResponse) return result as any;
       return result.body.hits.hits;
     } catch (err) {
       this.handleErrors(err);
@@ -264,7 +264,7 @@ export default class Sequelastic {
   > {
     try {
       const result = await this.elastic.search(params);
-      return result;
+      return result as any;
     } catch (err) {
       this.handleErrors(err);
     }
