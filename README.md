@@ -1,5 +1,6 @@
 # Sequelastic
 
+> :warning: this only works with sequelize-typescript@2.x.x, in order to use this package with sequelize-typescript@1.x.x run: ```npm install sequelastic@0.0.7```
 ## The first sequelize-typescript and ElasticSearch bridge tool
 
 - [installation](#installation)
