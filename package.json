@@ -31,6 +31,7 @@
     "colors": "^1.4.0",
     "exit": "^0.1.2",
     "pluralize": "^8.0.0",
+    "sequelize": "^5.22.3",
     "sequelize-typescript": "^1.1.0",
     "tslib": "^2.2.0"
   },
