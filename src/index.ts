@@ -58,7 +58,7 @@ export default class Sequelastic {
     const { models, exclude: fieldsToExclude, ...cliOpt } = options;
     this.models = models;
     this.elastic = new elasticSearch.Client({
-      node: "http://localhost:9200",
+      node: cliOpt.node || "http://localhost:9200",
       ...cliOpt,
     });
     this.#fieldsToExclude = fieldsToExclude;
@@ -68,43 +68,51 @@ export default class Sequelastic {
     const toExclude = this.#fieldsToExclude;
     const allDbPromises: Promise<any>[] = [];
     const allIndiciesCreationPromises: Promise<any>[] = [];
-    try {
-      await this.elastic.indices.delete({
-        index: "_all",
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-
+    // try {
+    //   await this.elastic.indices.delete({
+    //     index: "_all",
+    //   });
+    // } catch (err) {
+    //   throw new Error(err);
+    // }
+    const allIndices = await this.allIndices();
     this.models.forEach((model: SequelasticModelType) => {
       allIndiciesCreationPromises.push(
         new Promise((res, rej) => {
           // console.log("Model", model.rawAttributes);
           try {
             if (isSequelasticModel(model)) {
-              this.elastic.indices.create({
-                index: pluralize.plural(model.model.name.toLocaleLowerCase()),
-                body: {
-                  mappings: {
-                    properties: parseSqlAttributesToElastic(
-                      (model.model as any as typeof Model).rawAttributes
-                    ),
+              const newIndexName = pluralize.plural(
+                model.model.name.toLocaleLowerCase()
+              );
+              if (!allIndices.includes(newIndexName)) {
+                this.elastic.indices.create({
+                  index: newIndexName,
+                  body: {
+                    mappings: {
+                      properties: parseSqlAttributesToElastic(
+                        (model.model as any as typeof Model).rawAttributes
+                      ),
+                    },
                   },
-                },
-              });
+                });
+              }
             } else {
-              this.elastic.indices.create({
-                index: pluralize.plural(
-                  (model as ModelType).name.toLowerCase()
-                ),
-                body: {
-                  mappings: {
-                    properties: parseSqlAttributesToElastic(
-                      (model as typeof Model).rawAttributes
-                    ),
+              const newIndexName = pluralize.plural(
+                (model as ModelType).name.toLowerCase()
+              );
+              if (!allIndices.includes(newIndexName)) {
+                this.elastic.indices.create({
+                  index: newIndexName,
+                  body: {
+                    mappings: {
+                      properties: parseSqlAttributesToElastic(
+                        (model as typeof Model).rawAttributes
+                      ),
+                    },
                   },
-                },
-              });
+                });
+              }
             }
           } catch (err) {
             throw new Error(err);
@@ -137,13 +145,13 @@ export default class Sequelastic {
                     return [
                       {
                         index: {
+                          _id: x.id,
                           _index: pluralize.plural(
                             model.model.name.toLowerCase()
                           ),
                         },
-                        
                       },
-                      { _id: x.id, ...x?.toJSON() },
+                      { ...x?.toJSON() },
                     ];
                   })
               );
@@ -158,6 +166,7 @@ export default class Sequelastic {
                     return [
                       {
                         index: {
+                          _id: x.id,
                           _index: pluralize.plural(model.name.toLowerCase()),
                         },
                       },
@@ -175,7 +184,6 @@ export default class Sequelastic {
 
     try {
       const allDocuments = await Promise.all(allDbPromises);
-      console.log("🚀 ~ file: index.ts ~ line 178 ~ Sequelastic ~ sync ~ allDocuments", allDocuments)
       const indices = this.models.map((x, i) => {
         if (isSequelasticModel(x)) {
           return {
@@ -323,7 +331,7 @@ export default class Sequelastic {
     }
   }
 
-  public async allIndices() {
+  public async allIndices(): Promise<string[]> {
     const allIndices = await (
       await this.elastic.cat.indices({ format: "json" })
     ).body.map((x: any) => x.index);
