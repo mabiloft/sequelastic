@@ -58,7 +58,7 @@ export default class Sequelastic {
     const { models, exclude: fieldsToExclude, ...cliOpt } = options;
     this.models = models;
     this.elastic = new elasticSearch.Client({
-      node: "http://localhost.mabiloft.com:9200",
+      node: "http://localhost:9200",
       ...cliOpt,
     });
     this.#fieldsToExclude = fieldsToExclude;
@@ -141,8 +141,9 @@ export default class Sequelastic {
                             model.model.name.toLowerCase()
                           ),
                         },
+                        
                       },
-                      x?.toJSON(),
+                      { _id: x.id, ...x?.toJSON() },
                     ];
                   })
               );
@@ -174,6 +175,7 @@ export default class Sequelastic {
 
     try {
       const allDocuments = await Promise.all(allDbPromises);
+      console.log("🚀 ~ file: index.ts ~ line 178 ~ Sequelastic ~ sync ~ allDocuments", allDocuments)
       const indices = this.models.map((x, i) => {
         if (isSequelasticModel(x)) {
           return {
